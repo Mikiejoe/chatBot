@@ -7,6 +7,9 @@ const router = express.Router();
 //   content:
 //     "You are a psychologist.Let's keep the conversation human-like, responding in a way that feels natural and relatable.Respond in swahili",
 // };
+router.get("", (req, res) => {
+  res.send("Welcome to the chat route");
+});
 
 router.post("/chat", async (req, res) => {
   const newMessages = req.body.messages;
