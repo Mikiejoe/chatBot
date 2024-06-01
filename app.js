@@ -17,7 +17,7 @@ app.use("/", chatRouter);
 app.use("/auth", authRouter);
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = DEBUG ? process.env.DEV_MONGO_URI : process.env.MONGO_URI //|| "mongodb://localhost:27017/chatapp";
+const MONGO_URI = process.env.MONGO_URI //|| "mongodb://localhost:27017/chatapp";
 mongoose
   .connect(MONGO_URI)
   .then(() => {
