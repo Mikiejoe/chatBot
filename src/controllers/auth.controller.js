@@ -8,6 +8,8 @@ const { Token } = require('../models/token.models');
 
 exports.signup = async (req, res) => {
     const errors = validationResult(req);
+    console.log("sdfg");
+    console.log(errors);
     if (!errors.isEmpty()) {
         const errorMessages = errors.array().map((error) => ({
             field: error.path,
