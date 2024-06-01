@@ -1,6 +1,7 @@
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
 require('dotenv').config();
 
 const express = require("express");
@@ -14,6 +15,8 @@ const corsOptions = {
   optionsSuccessStatus: 200,
   credentials: true,
 };
+
+app.use(morgan("dev"));
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
