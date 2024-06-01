@@ -12,6 +12,7 @@ const DEBUG = process.env.DEBUG
 const corsOptions = {
   origin: "https://itakuafty.vercel.app",
   optionsSuccessStatus: 200,
+  credentials: true,
 };
 
 app.use(bodyParser.json());
