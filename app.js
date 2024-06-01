@@ -9,9 +9,15 @@ const authRouter = require("./src/routes/auth.routes");
 const app = express();
 const DEBUG = process.env.DEBUG
 
+const corsOptions = {
+  origin: "https://itakuafty.vercel.app",
+  optionsSuccessStatus: 200,
+};
+
 app.use(bodyParser.json());
-app.use(cors());
-app.options("*", cors());
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 
 app.use("/", chatRouter);
 app.use("/auth", authRouter);
