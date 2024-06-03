@@ -1,36 +1,39 @@
 const chatUtil = require("../utils/chat.utils");
-const { Message } = require("../models/message.model");
+// const { Message } = require("../models/message.model");
 const { Chat } = require("../models/chat.model");
 const { User } = require("../models/user.model");
-
+const mongoose = require("mongoose");
 const getAllChats = async (req, res) => {
-  const chats = await Chat.find({});
-  res.json({ chats: chats });
+  // const chats = await Chat.find({});
+  const userId = req.user.userId;
+  const chats = await Chat.find({ user: userId });
+  console.log(chats);
+  res.json({ chats: chats});
 };
 
 const getModelMessage = async (messages, chatId) => {
-  // const newMessages = messages;
+  const newMessages = messages;
+  console.log("messsent",newMessages)
 
-  // const response = await chatUtil.main(newMessages);
+  const response = await chatUtil.main(newMessages);
 
-  const chatCompletion = { role: "assistant", content: "helllo" };
+  const chatCompletion = { role: "assistant", content: response };
   // newMessages.push(chatCompletion);
-  // console.log(chatCompetion)
+  console.log(chatCompletion);
   const chat = await Chat.findById(chatId);
-  const message = new Message();
-  message.chatId = chat._id;
-  message.content = chatCompletion.content;
-  message.role = chatCompletion.role;
+  chat.messages.push(chatCompletion);
 
-  const savedMessage = await message.save();
+  const savedMessage = await chat.save();
 
   // return chatCompletion
 };
 
 const getMessages = async (req, res) => {
   const chatId = req.params.id;
-  const messages = await Message.find({ chatId });
-  console.log("hello", messages);
+  const chat = await Chat.findById(chatId);
+  const messages = chat.messages;
+  // const messages = await Message.find({ chatId });
+  // console.log("hello", messages);
   // await getModelMessage(messages,chatId)
   return res.json(messages);
 };
@@ -38,17 +41,33 @@ const getMessages = async (req, res) => {
 const createMessage = async (req, res) => {
   const chatId = req.params.id;
   const chat = await Chat.findById(chatId);
-  const message = new Message();
-  const messages = await Message.find({ chatId });
-  console.log("hello", messages);
+  const userId = req.user.userId;
 
-  message.chatId = chat._id;
-  message.content = req.body.content;
-  message.role = req.body.role;
-  const savedMessage = await message.save();
+  const userMessage = {
+    content: req.body.content,
+    role: req.body.role,
+  };
+  chat.messages.push(userMessage);
+  const savedMessage = await chat.save();
+  const messages = await Chat.aggregate([
+    { $match: { user: new mongoose.Types.ObjectId(userId) } },
+    { $project: {
+        messages: {
+          $map: {
+            input: '$messages',
+            as: 'message',
+            in: {
+              role: '$$message.role',
+              content: '$$message.content'
+            }
+          }
+        },
+        _id: 0
+      }
+    }]);
   if (savedMessage) {
-    console.log(savedMessage);
-    await getModelMessage(messages, chatId);
+    console.log("mess",messages[0]);
+    await getModelMessage(messages[0]["messages"], chatId);
     return res.json({ message: savedMessage });
   }
 };
@@ -56,33 +75,21 @@ const createMessage = async (req, res) => {
 const createChat = async (req, res) => {
   const chat = new Chat();
   const user = await User.findById(req.user.userId);
-  chat.userId = user._id;
+  chat.user = user._id;
   const system = {
     role: "system",
     content:
       "You are Dr. Rachel, my psychologist.Let's keep the conversation human-like, responding in a way that feels natural and relatable. Send emojis where necessary.",
   };
   try {
+    chat.messages.push(system);
     const newChat = await chat.save();
 
-    if (newChat) {
-      console.log(newChat);
-      const systemChat = await Chat.findById(newChat._id);
-      const message = new Message();
-      message.chatId = systemChat._id;
-      message.content = system.content;
-      message.role = system.role;
-      message.save()
-      console.log("success");
-
-      return res.json({ chat: newChat });
-    }
+    return res.json({ chat: newChat });
   } catch (error) {
     console.log(error.message);
   }
 
-  // await chat.save();
-  // res.json({ chat });
 };
 
 module.exports = {

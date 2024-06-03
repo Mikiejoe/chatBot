@@ -1,6 +1,6 @@
 const express = require("express");
 const chatController = require("../controllers/chat.controller");
-const { Message } = require("../models/message.model");
+// const { Message } = require("../models/message.model");
 const { Chat } = require("../models/chat.model");
 
 const router = express.Router();
