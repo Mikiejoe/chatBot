@@ -50,7 +50,7 @@ const createMessage = async (req, res) => {
   chat.messages.push(userMessage);
   const savedMessage = await chat.save();
   const messages = await Chat.aggregate([
-    { $match: { user: new mongoose.Types.ObjectId(userId) } },
+    { $match: { _id: new mongoose.Types.ObjectId(chatId) } },
     { $project: {
         messages: {
           $map: {
