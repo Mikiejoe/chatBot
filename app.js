@@ -12,10 +12,10 @@ const app = express();
 const DEBUG = process.env.DEBUG;
 
 const dev = "https://itakuafty.vercel.app"
-const prod = "http://localhost:5173"
-
+const prod = "https://itakuafty.vercel.app"
+  
 const corsOptions = {
-  origin: DEBUG ? dev:prod,
+  origin: DEBUG ? prod:dev,
   optionsSuccessStatus: 200,
   credentials: true,
 };
