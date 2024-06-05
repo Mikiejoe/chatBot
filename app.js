@@ -15,7 +15,7 @@ const dev = "https://itakuafty.vercel.app"
 const prod = "http://localhost:5173"
 
 const corsOptions = {
-  origin: DEBUG ? prod:dev,
+  origin: "https://itakuafty.vercel.app",
   optionsSuccessStatus: 200,
   credentials: true,
 };
