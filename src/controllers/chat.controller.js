@@ -25,7 +25,7 @@ const getModelMessage = async (messages, chatId) => {
 
   const savedMessage = await chat.save();
 
-  // return chatCompletion
+  return chatCompletion
 };
 
 const getMessages = async (req, res) => {
@@ -67,8 +67,8 @@ const createMessage = async (req, res) => {
     }]);
   if (savedMessage) {
     console.log("mess",messages[0]);
-    await getModelMessage(messages[0]["messages"], chatId);
-    return res.json({ message: savedMessage });
+    const modelResponse = await getModelMessage(messages[0]["messages"], chatId);
+    return res.json({ message: modelResponse });
   }
 };
 
