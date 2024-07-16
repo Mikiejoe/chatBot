@@ -13,9 +13,16 @@ const DEBUG = process.env.DEBUG;
 
 const dev = "https://itakuafty.vercel.app"
 const prod = "http://localhost:5173"
+const allowedOrigins = ["http://localhost:5173", "https://itakuafty.vercel.app"];
 
 const corsOptions = {
-  origin: DEBUG ? prod:dev,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200,
   credentials: true,
 };
